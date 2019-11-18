@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
-import "./ListItem.scss";
+import {connect} from 'react-redux';
+
 import {
   MoveUpButton,
   MoveDownButton,
@@ -8,12 +9,35 @@ import {
   RemoveSublistButton
 } from "./list-item-buttons";
 
+import { 
+  moveItem,
+  addSublist,
+  removeItem, 
+  removeSublist} from '../../../actions';
+
+import "./ListItem.scss";
+
 class ListItem extends PureComponent {
-  moveUp = () => this.props.handleMoveItem(this.props.item.value, -1);
-  moveDown = () => this.props.handleMoveItem(this.props.item.value, 1);
-  addSublist = () => this.props.handleAddSublist(this.props.item.value);
-  removeItem = () => this.props.handleRemoveItem(this.props.item.value);
-  removeSublist = () => this.props.handleRemoveSublist(this.props.item.value);
+  handleMoveUp = () => {
+    const {moveUp, item: {value}} = this.props;
+    moveUp(value, -1);
+  }
+  handleMoveDown = () => {
+    const {moveDown, item: {value}} = this.props;
+    moveDown(value, 1);
+  }
+  handleAddSublist = () => {
+    const {addSublist, item: {value}} = this.props;
+    addSublist(value);
+  }
+  handleRemoveItem = () =>  {
+    const {removeItem, item: {value}} = this.props;
+    removeItem(value);
+  }
+  handleRemoveSublist = () => {
+    const {removeSublist, item: {value}} = this.props;
+    removeSublist(value);
+  }
 
   render() {
     const {
@@ -29,11 +53,11 @@ class ListItem extends PureComponent {
         <div className="list-item__head">
           <span>{name}</span>
           <span>
-            {!isFirst && <MoveUpButton clicked={this.moveUp} />}
-            {!isLast && <MoveDownButton clicked={this.moveDown} />}
-            {!hasSublist && <AddSublistButton clicked={this.addSublist} />}
-            {hasSublist && <RemoveSublistButton clicked={this.removeSublist} />}
-            {<RemoveItemButton clicked={this.removeItem} />}
+            {!isFirst && <MoveUpButton clicked={this.handleMoveUp} />}
+            {!isLast && <MoveDownButton clicked={this.handleMoveDown} />}
+            {!hasSublist && <AddSublistButton clicked={this.handleAddSublist} />}
+            {hasSublist && <RemoveSublistButton clicked={this.handleRemoveSublist} />}
+            {<RemoveItemButton clicked={this.handleRemoveItem} />}
           </span>
         </div>
       </div>
@@ -41,4 +65,14 @@ class ListItem extends PureComponent {
   }
 }
 
-export default ListItem;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    moveUp: (item, step) => dispatch(moveItem(item, step)),
+    moveDown: (item, step) => dispatch(moveItem(item, step)),
+    addSublist: (item) => dispatch(addSublist(item)),
+    removeItem: (item) => dispatch(removeItem(item)),
+    removeSublist: (item) => dispatch(removeSublist(item))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(ListItem);

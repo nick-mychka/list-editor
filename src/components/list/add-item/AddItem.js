@@ -1,7 +1,11 @@
 import React, { PureComponent } from "react";
+import { connect } from 'react-redux';
 
 import Input from "../../common/input/Input";
 import Button from "../../common/button/Button";
+
+import { addItem } from '../../../actions';
+import { uuid } from "../../../utils/uuid";
 
 import "./AddItem.scss";
 
@@ -20,16 +24,21 @@ class AddItem extends PureComponent {
 
   handleKeyUp = event => {
     if (event.key === "Enter") {
-      this.addItem();
+      this.handleAddItem();
     }
   };
 
-  addItem = () => {
-    const { handleAddItem, parent } = this.props;
+  handleAddItem = () => {
+    const { addItem, parent } = this.props;
     const { title } = this.state;
 
     if (this.hasValue) {
-      handleAddItem(title, parent);
+      const item = {
+        id: uuid(),
+        name: title,
+        hasSublist: false
+      };
+      addItem(item, parent);
       this.setState({ title: "" });
     }
   };
@@ -44,7 +53,7 @@ class AddItem extends PureComponent {
           value={title}
         />
 
-        <Button disabled={!this.hasValue} clicked={this.addItem}>
+        <Button clicked={this.handleAddItem} disabled={!this.hasValue}>
           Add Item
         </Button>
       </div>
@@ -52,4 +61,10 @@ class AddItem extends PureComponent {
   }
 }
 
-export default AddItem;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addItem: (item, parent) => dispatch(addItem(item, parent))
+  };
+}
+
+export default connect(null, mapDispatchToProps)(AddItem);
