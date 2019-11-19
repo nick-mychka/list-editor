@@ -18,26 +18,11 @@ import {
 import "./ListItem.scss";
 
 class ListItem extends PureComponent {
-  handleMoveUp = () => {
-    const {moveUp, item: {value}} = this.props;
-    moveUp(value, -1);
-  }
-  handleMoveDown = () => {
-    const {moveDown, item: {value}} = this.props;
-    moveDown(value, 1);
-  }
-  handleAddSublist = () => {
-    const {addSublist, item: {value}} = this.props;
-    addSublist(value);
-  }
-  handleRemoveItem = () =>  {
-    const {removeItem, item: {value}} = this.props;
-    removeItem(value);
-  }
-  handleRemoveSublist = () => {
-    const {removeSublist, item: {value}} = this.props;
-    removeSublist(value);
-  }
+  handleMoveUp = () => this.props.moveItem(this.props.item.value, -1);
+  handleMoveDown = () => this.props.moveItem(this.props.item.value, 1);
+  handleAddSublist = () => this.props.addSublist(this.props.item.value);
+  handleRemoveItem = () => this.props.removeItem(this.props.item.value);
+  handleRemoveSublist = () => this.props.removeSublist(this.props.item.value);
 
   render() {
     const {
@@ -65,14 +50,11 @@ class ListItem extends PureComponent {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    moveUp: (item, step) => dispatch(moveItem(item, step)),
-    moveDown: (item, step) => dispatch(moveItem(item, step)),
-    addSublist: (item) => dispatch(addSublist(item)),
-    removeItem: (item) => dispatch(removeItem(item)),
-    removeSublist: (item) => dispatch(removeSublist(item))
-  }
+const mapDispatchToProps = {
+    moveItem,
+    addSublist,
+    removeItem,
+    removeSublist
 }
 
 export default connect(null, mapDispatchToProps)(ListItem);
